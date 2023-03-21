@@ -1,2 +1,3 @@
 const { Response } = require("./response")
-module.exports = { Response }
+const { Transaction } = require("./transaction")
+module.exports = { Response, Transaction }

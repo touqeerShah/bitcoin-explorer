@@ -1,13 +1,39 @@
 const axios = require("axios");
-const { Response } = require("../classes")
+const { Response, Transaction } = require("../classes")
 const { nextConfig } = require("../next.config")
-const { getTotalBTC } = require("./../lib")
+const { getTotalBTC, epochToDate } = require("./../lib")
 async function getTransactionDetails(txHash) {
     try {
         const { data } = await axios.get(`${nextConfig.env.BLOCKCHAIN_TRANSACTION_ENDPOINT}${txHash}/?format=json`, {});
-        console.log("total : ", getTotalBTC(data?.inputs));
-        // console.log(new Response({ status: 200, message: "Successful fetch Result", data }));
-        return new Response({ status: 200, message: "Successful fetch Result", data })
+        // console.log("total : ", getTotalBTC(data?.inputs));
+        let receivedTime = epochToDate(data?.time)
+        let totalInputBTC = getTotalBTC(data?.inputs)
+        let totalOutputBTC = getTotalBTC(data?.outputs)
+        let totalFeesBTC = data?.fee
+        let size = data?.size
+        let confirmations = 0
+        let status = data?.block.hasOwnProperty("mempool") ? "Pending" : "Conformed"
+        if (status == "Conformed") {
+            let latestBlock = await getLatestBlock();
+            // console.log("latestBlock", latestBlock);
+
+            confirmations = latestBlock?.data - data?.block?.height + 1
+        }
+        let transaction = new Transaction({ transactionHash: "", receivedTime, status, size, confirmations, totalInputBTC, totalOutputBTC, totalFeesBTC })
+        // console.log("transaction=== >", transaction);
+        return new Response({ status: 200, message: "Successful fetch Result", data: transaction })
+    } catch (error) {
+        // console.log(new Response({ status: 404, message: error.message, data: {} }));
+        return new Response({ status: 404, message: error.message, data: {} })
+    }
+
+}
+
+async function getUnconfirmedTransactionHash() {
+    try {
+        const { data } = await axios.get(`${nextConfig.env.BLOCKCHAIN_API_ENDPOINT}unconfirmed-transactions?format=json`, {});
+        // console.log("data.txs[0]", data.txs[0].hash);
+        return new Response({ status: 200, message: "Successful fetch Result", data: data.txs[0]["hash"] })
     } catch (error) {
         console.log(new Response({ status: 404, message: error.message, data: {} }));
         return new Response({ status: 404, message: error.message, data: {} })
@@ -15,9 +41,17 @@ async function getTransactionDetails(txHash) {
 
 }
 
-getTransactionDetails("089b79b066685df7a03f06d8bc4f66bd05fbb2167301aab2cbd83e2e8ff586f4")
+async function getLatestBlock() {
+    try {
+        const { data } = await axios.get(`${nextConfig.env.BLOCKCHAIN_API_ENDPOINT}latestblock?format=json`, {});
+        // console.log("data.txs[0]", data.txs[0].hash);
+        return new Response({ status: 200, message: "Successful fetch Result", data: data["height"] })
+    } catch (error) {
+        return new Response({ status: 404, message: error.message, data: 0 })
+    }
+
+}
 
 
 
-
-module.exports = { getTransactionDetails }
+module.exports = { getTransactionDetails, getUnconfirmedTransactionHash }

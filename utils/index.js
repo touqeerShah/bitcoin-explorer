@@ -1,3 +1,3 @@
-const { getTransactionDetails } = require("./blockchain-api")
+const { getTransactionDetails, getUnconfirmedTransactionHash } = require("./blockchain-api")
 
-module.exports = { getTransactionDetails }
+module.exports = { getTransactionDetails, getUnconfirmedTransactionHash }
