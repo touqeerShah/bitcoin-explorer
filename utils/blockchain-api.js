@@ -1,15 +1,15 @@
 const axios = require("axios");
 const { Response, Transaction } = require("../classes")
 const { nextConfig } = require("../next.config")
-const { getTotalBTC, epochToDate } = require("./../lib")
-async function getTransactionDetails(txHash) {
+const { getTotalBTC, epochToDate, btcFiat } = require("./../lib")
+async function getTransactionDetails(txHash, currency) {
     try {
         const { data } = await axios.get(`${nextConfig.env.BLOCKCHAIN_TRANSACTION_ENDPOINT}${txHash}/?format=json`, {});
         // console.log("total : ", getTotalBTC(data?.inputs));
         let receivedTime = epochToDate(data?.time)
-        let totalInputBTC = getTotalBTC(data?.inputs)
-        let totalOutputBTC = getTotalBTC(data?.outputs)
-        let totalFeesBTC = data?.fee
+        let totalInputBTC = await btcFiat(getTotalBTC(data?.inputs), currency)
+        let totalOutputBTC = await btcFiat(getTotalBTC(data?.outputs), currency)
+        let totalFeesBTC = await btcFiat(data?.fee, currency)
         let size = data?.size
         let confirmations = 0
         let status = data?.block.hasOwnProperty("mempool") ? "Pending" : "Conformed"
