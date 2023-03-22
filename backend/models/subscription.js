@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 const { ObjectId } = mongoose.Schema;
@@ -10,10 +10,16 @@ const subscription = new Schema({
         unique: true,
     },
     subscription: [{
-        hash: String,
-        isActive: Boolean,
+        hash: {
+            type: String,
+            default: true
+        },
+        isActive: {
+            type: Boolean,
+            default: true
+        },
         timestamps: { type: Date, default: Date.now }
     }],
 });
 
-module.exports = mongoose.model("subscription", subscription);
+module.exports = mongoose.model("Subscription", subscription);

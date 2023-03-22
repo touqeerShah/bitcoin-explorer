@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 const { ObjectId } = mongoose.Schema;
@@ -9,9 +9,17 @@ const notifications = new Schema({
         required: true,
         unique: true,
     },
-    notification: String,
-    isNew: Boolean,
-    isView: Boolean
+    notify: {
+        type: String,
+    },
+    isNewNotification: {
+        type: Boolean,
+        default: true
+    },
+    isView: {
+        type: Boolean,
+        default: false
+    },
 
 }, {
     timestamps: {
@@ -20,4 +28,4 @@ const notifications = new Schema({
     }
 });
 
-module.exports = mongoose.model("notifications", notifications);
+module.exports = mongoose.model("Notifications", notifications);

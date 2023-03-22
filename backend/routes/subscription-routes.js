@@ -1,14 +1,13 @@
 const express = require("express");
 const {
-  addSubscription,
+  addAndUpdateSubscription,
   updateSubscription,
   getSubscription
 } = require("../controller/subscription-controller");
 const subscriptionRouter = express.Router();
 // following are the routes which we used to expose the  backend service
 
-subscriptionRouter.post("/addSubscription", addSubscription);
-subscriptionRouter.post("/updateSubscription", updateSubscription);
+subscriptionRouter.post("/addAndUpdateSubscription", addAndUpdateSubscription);
 subscriptionRouter.post("/getSubscription", getSubscription);
 
 

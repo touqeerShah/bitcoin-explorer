@@ -15,4 +15,4 @@ const history = new Schema({
     }],
 });
 
-module.exports = mongoose.model("history", history);
+module.exports = mongoose.model("History", history);

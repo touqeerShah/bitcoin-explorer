@@ -1,14 +1,12 @@
 const express = require("express");
 const {
   getSearchHistory,
-  addSearchHistory,
-  updateSearchHistory
+  addAndUpdateHistory
 } = require("../controller/history-controller");
 const historyRouter = express.Router();
 // following are the routes which we used to expose the  backend service
-historyRouter.post("/getSearchHistory", getSearchHistory);
-historyRouter.post("/addSearchHistory", addSearchHistory);
-historyRouter.post("/updateSearchHistory", updateSearchHistory);
+historyRouter.get("/getSearchHistory", getSearchHistory);
+historyRouter.post("/addAndUpdateHistory", addAndUpdateHistory);
 
 
 module.exports = historyRouter;
