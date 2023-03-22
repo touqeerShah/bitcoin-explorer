@@ -69,17 +69,26 @@ npm run test
 ```
 Result :
 ```
-  Transactions
-    ✔ Check API Respond on valid Tx hash (560ms)
-    ✔ Check API Respond on invalid Tx hash (252ms)
-    ✔ Check Response Instance (592ms)
-    ✔ Check Response data is instance of Transaction class (568ms)
-    ✔ Check Transaction Received Time is Date instance (500ms)
-    ✔ Check no mine status should pending (617ms)
-    ✔ Check mine status should Conformed (533ms)
-    ✔ Total input,output and fee BTC greater the Zero (522ms)
-    ✔ Block Size not equal to Zero (491ms)
-    ✔ confirmations  greater then zero if is status is conformed (484ms)
+   Account
+    ✔ Check API Respond on valid Address hash
+    ✔ Check API Respond on invalid Address hash (335ms)
+    ✔ Check Response Instance
+    ✔ Check Response data is instance of Account class
+    ✔ Total input,output,balance and unspent all should define 
+    ✔ Address is Define  
 
-  10 passing (5s)
+  Transactions
+    ✔ Check API Respond on valid Tx hash
+    ✔ Check API Respond on invalid Tx hash (298ms)
+    ✔ Check Response Instance
+    ✔ Check Response data is instance of Transaction class
+    ✔ Check Transaction Received Time is Date instance
+    ✔ Check no mine status should pending (612ms)
+    ✔ Check mine status should Conformed
+    ✔ Total input,output and fee BTC greater the Zero
+    ✔ Block Size not equal to Zero
+    ✔ confirmations  greater then zero if is status is conformed
+
+
+  16 passing (4s)
 ```

@@ -31,6 +31,7 @@ describe("Transactions", async function () {
     });
     it("Check no mine status should pending", async () => {
         let response = await getUnconfirmedTransactionHash();
+        // console.log("response", response);
         response = await getTransactionDetails(response.data);
         assert.equal(response.data.status, "Pending");
     });
