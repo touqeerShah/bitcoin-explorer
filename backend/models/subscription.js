@@ -12,7 +12,6 @@ const subscription = new Schema({
     subscription: [{
         hash: {
             type: String,
-            default: true
         },
         isActive: {
             type: Boolean,

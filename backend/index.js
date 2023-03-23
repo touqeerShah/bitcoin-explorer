@@ -13,6 +13,7 @@ var notificationRouter = require("./routes/notification-routes");
 var subscriptionRouter = require("./routes/subscription-routes");
 
 const { loadMongo } = require("./utils/helper")
+const { bitcoinBlockchainLisner } = require("./utils/web-socket")
 /**
  * This used to store values in local storage  of server which help us
  */
@@ -100,6 +101,7 @@ app.use("/api/subscription", subscriptionRouter);
 const PORT = configObj.PORT || 8081;
 server.listen(PORT, () => {
   loadMongo()
+  bitcoinBlockchainLisner()
   console.info(
     `Please open web browser to access ：${protocol}://${configObj.host}:${PORT}/`
   );

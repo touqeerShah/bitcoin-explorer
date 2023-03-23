@@ -77,42 +77,19 @@ module.exports.addAndUpdateSubscription = async (req, res) => {
  */
 module.exports.updateStatusSubscription = async ({ deviceId, hash }) => {
     try {
-        let subscriptionRecord = await Subscription.aggregate([
+
+        await Subscription.updateMany({
+            "subscription.hash": hash,
+            deviceId: deviceId
+        },
             {
-                $match: {
-                    deviceId: deviceId
-                }
-            },
-            {
-                $unwind: "$subscription"
-            },
-            {
-                $sort: {
-                    "subscription.timestamps": -1
-                }
-            },
-            {
-                $group: {
-                    _id: "$_id",
-                    deviceId: {
-                        $first: "$deviceId"
-                    },
-                    subscription: {
-                        $push: "$subscription"
-                    }
+                '$set': {
+                    'subscription.$.isActive': false
                 }
             }
-        ])
-        if (subscriptionRecord.length != 0) {
-            var foundIndex = subscriptionRecord[0].subscription.findIndex(element => element.hash == hash);
-            subscriptionRecord[0].subscription[foundIndex].isActive = false;
-            await Subscription.updateOne({
-                deviceId: deviceId
-            }, {
-                subscription: subscriptionRecord[0].subscription
-            })
-        }
-        return (new Response({ status: 200, message: "update add", data: subscriptionRecord[0] }))
+        )
+
+        return (new Response({ status: 200, message: "update add", data: {} }))
         // console.log("subscriptionRecord", subscriptionRecord);
     } catch (error) {
         console.log("error", error.message);
@@ -124,16 +101,51 @@ module.exports.updateStatusSubscription = async ({ deviceId, hash }) => {
  * @param {*} req 
  * @param {*} res 
  */
-module.exports.getSubscription = async ({ deviceId, isActive }) => {
+module.exports.getSubscription = async ({ isActive }) => {
     try {
 
-        const subscriptionRecord = await Subscription.find({
-            deviceId, 'subscription.isActive': isActive
-        }).sort({ 'subscription.timestamps': -1 });
+        let subscriptionRecord = await Subscription
+            .find({}, {
+                deviceId: 1,
+                subscription: {
+                    $elemMatch: {
+                        isActive: isActive
+                    }
+                }
+            }).populate('subscription')
+            .sort({ 'subscription.timestamps': -1 });
+
+
+        // console.log("subscriptionRecord====>", subscriptionRecord);
         return (new Response({ status: 200, message: "query response", data: subscriptionRecord }))
 
     } catch (error) {
-        return (new Response({ status: error.statusCode, message: error.message, data: {} }))
+        console.log("error", error);
+        return (new Response({ status: 400, message: error.message, data: {} }))
+
+    }
+};
+
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+module.exports.getSubscriptionBy = async ({ _id }) => {
+    try {
+
+        let subscriptionRecord = await Subscription
+            .find({ _id }, {
+                deviceId: 1
+            }).sort({ 'subscription.timestamps': -1 });
+
+
+        // console.log("subscriptionRecord====>", subscriptionRecord);
+        return (new Response({ status: 200, message: "query response", data: subscriptionRecord }))
+
+    } catch (error) {
+        console.log("error", error);
+        return (new Response({ status: 400, message: error.message, data: {} }))
 
     }
 };

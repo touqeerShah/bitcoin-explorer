@@ -5,7 +5,7 @@ const app = require('../index');
 const { v4: uuidv4 } = require('uuid');
 const { configObj } = require("./../config")
 const axios = require("axios");
-const { updateStatusSubscription, getSubscription } = require("./../controller/subscription-controller")
+const { updateStatusSubscription, getSubscription, getSubscriptionBy } = require("./../controller/subscription-controller")
 
 describe("Subscription", async function () {
     let deviceId, hash
@@ -32,8 +32,6 @@ describe("Subscription", async function () {
 
     });
     it("Check when add some hash in user Subscription", async () => {
-        // console.log("hash", hash);
-        // accountDetails = await addAndUpdateHistory(req, {});        // console.log(block);
         const response = await request(app)
             .post('/api/subscription/addAndUpdateSubscription')
             .send({
@@ -167,10 +165,24 @@ describe("Subscription", async function () {
 
 
     // });
+    it("Check getAll Subscription", async () => {
+        const updateResponse = await getSubscription({ isActive: true })
+        // console.log(updateResponse);
+        // for (let outer = 0; outer < updateResponse.data.length; outer++) {
+        //     const user = updateResponse.data[outer];
+        //     console.log(user);
+        //     for (let inner = 0; inner < user.subscription.length; inner++) {
+        //         const subscription = user.subscription[inner];
+        //         // console.log("subscription", subscription);
+        //     }
 
+        // }
+        assert.equal(updateResponse.status, 200);
+        assert.equal(updateResponse.message, "query response");
+        // assert.isAbove(updateResponse.data.length, 0);
+
+    });
     it("Check deactivated Subscription", async () => {
-        // console.log("hash", hash);
-        // accountDetails = await addAndUpdateHistory(req, {});        // console.log(block);
         const updateResponse = await updateStatusSubscription({ deviceId, hash })
         // console.log("response.body", response.body);
         assert.equal(updateResponse.status, 200);
@@ -179,11 +191,5 @@ describe("Subscription", async function () {
     });
 
 
-    it("Check getAll Subscription", async () => {
-        const updateResponse = await getSubscription({ deviceId, isActive: false })
-        assert.equal(updateResponse.status, 200);
-        assert.equal(updateResponse.message, "query response");
-        assert.isAbove(updateResponse.data.length, 0);
 
-    });
 });

@@ -7,7 +7,6 @@ const notifications = new Schema({
     deviceId: {
         type: String,
         required: true,
-        unique: true,
     },
     notify: {
         type: String,

@@ -7,10 +7,9 @@ module.exports.configObj = {
   MONGO_PASS: process.env.MONGO_PASS,
   MONGO_USER: process.env.MONGO_USER,
   PORT: process.env.PORT,
-  sslcertsPath: process.env.keyValueStore,
-  sslEnabled: process.env.sslEnabled,
-  host: process.env.HOST,
-  WEBSOCKET_PORT: process.env.WEBSOCKET_PORT,
-  BLOCKCHAIN_API_ENDPOINT: process.env.BLOCKCHAIN_API_ENDPOINT
 
+  host: process.env.HOST,
+  BLOCKCHAIN_INFO_WEBSOCKET_ADDRESS: process.env.BLOCKCHAIN_INFO_WEBSOCKET_ADDRESS,
+  BLOCKCHAIN_API_ENDPOINT: process.env.BLOCKCHAIN_API_ENDPOINT,
+  BLOCKCHAIN_TRANSACTION_ENDPOINT: process.env.BLOCKCHAIN_TRANSACTION_ENDPOINT
 };
