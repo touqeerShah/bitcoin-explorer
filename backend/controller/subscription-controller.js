@@ -39,26 +39,34 @@ module.exports.addAndUpdateSubscription = async (req, res) => {
             }
         ])
         if (subscriptionRecord.length == 0) {
-            const history = new History({
+            subscriptionRecord = new Subscription({
                 deviceId,
             });
-            history.subscription.push({ hash })
-            await history.save();
+            subscriptionRecord.subscription.push({ hash })
+            await subscriptionRecord.save();
         } else {
+            let index = -1
+            const isHashExist = (subscription) => subscription.hash == hash;
+            index = subscriptionRecord[0].subscription.findIndex(isHashExist)
+            // console.log("index", index);
+            if (index < 0) {
+                subscriptionRecord[0].subscription.push({ hash })
 
-            subscriptionRecord[0].subscription.push({ hash })
-
-            await Subscription.updateOne({
-                deviceId: deviceId
-            }, {
-                subscription: subscriptionRecord[0].subscription
-            })
+                await Subscription.updateOne({
+                    deviceId: deviceId
+                }, {
+                    subscription: subscriptionRecord[0].subscription
+                })
+            } else {
+                res.send(new Response({ status: 403, message: "Hash Already Exist", data: subscriptionRecord[0] }))
+                return;
+            }
         }
         res.send(new Response({ status: 200, message: "Successfully add", data: subscriptionRecord[0] }))
         // console.log("subscriptionRecord", subscriptionRecord);
     } catch (error) {
         console.log("error", error.message);
-        res.send(new Response({ status: error.code, message: error.message, data: {} }))
+        res.send(new Response({ status: error.statusCode, message: error.message, data: {} }))
     }
 };
 
@@ -67,7 +75,7 @@ module.exports.addAndUpdateSubscription = async (req, res) => {
  * @param {*} req 
  * @param {*} res 
  */
-module.exports.updateStatusSubscription = async (deviceId, hash) => {
+module.exports.updateStatusSubscription = async ({ deviceId, hash }) => {
     try {
         let subscriptionRecord = await Subscription.aggregate([
             {
@@ -104,11 +112,11 @@ module.exports.updateStatusSubscription = async (deviceId, hash) => {
                 subscription: subscriptionRecord[0].subscription
             })
         }
-        return (new Response({ status: 200, message: "Successfully add", data: subscriptionRecord[0] }))
+        return (new Response({ status: 200, message: "update add", data: subscriptionRecord[0] }))
         // console.log("subscriptionRecord", subscriptionRecord);
     } catch (error) {
         console.log("error", error.message);
-        return (new Response({ status: error.code, message: error.message, data: {} }))
+        return (new Response({ status: error.statusCode, message: error.message, data: {} }))
     }
 };
 /**
@@ -116,18 +124,16 @@ module.exports.updateStatusSubscription = async (deviceId, hash) => {
  * @param {*} req 
  * @param {*} res 
  */
-module.exports.getSubscription = async (deviceId) => {
+module.exports.getSubscription = async ({ deviceId, isActive }) => {
     try {
 
-        console.log("hetete");
-
         const subscriptionRecord = await Subscription.find({
-            deviceId, 'subscription.isActive': true
+            deviceId, 'subscription.isActive': isActive
         }).sort({ 'subscription.timestamps': -1 });
         return (new Response({ status: 200, message: "query response", data: subscriptionRecord }))
 
     } catch (error) {
-        return (new Response({ status: error.code, message: error.message, data: {} }))
+        return (new Response({ status: error.statusCode, message: error.message, data: {} }))
 
     }
 };

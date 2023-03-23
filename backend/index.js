@@ -96,6 +96,7 @@ app.use("/api/subscription", subscriptionRouter);
  */
 
 
+
 const PORT = configObj.PORT || 8081;
 server.listen(PORT, () => {
   loadMongo()
@@ -105,5 +106,6 @@ server.listen(PORT, () => {
   console.info(`pid is ${process.pid}`);
 });
 
+module.exports = app
 //connect to explorer websocket and become client for Explorer
 

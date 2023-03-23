@@ -7,7 +7,7 @@ const { Response } = require("../classes")
  * @param {*} req 
  * @param {*} res 
  */
-module.exports.addNotification = async (deviceId, notify) => {
+module.exports.addNotification = async ({ deviceId, notify }) => {
 
     try {
         const notifications = new Notifications({
@@ -21,7 +21,7 @@ module.exports.addNotification = async (deviceId, notify) => {
         // console.log("historyRecord", historyRecord);
     } catch (error) {
         console.log("error", error.message);
-        res.send(new Response({ status: error.code, message: error.message, data: {} }))
+        return (new Response({ status: error.statusCode, message: error.message, data: {} }))
     }
 
 };
@@ -35,18 +35,21 @@ module.exports.updateNotification = async (req, res) => {
     try {
         const {
             deviceId,
-            isNewNotification, isView
+            isNewNotification,
+            isView
         } = req.body;
+
         const notifications = await Notifications.findOneAndUpdate({
             deviceId
         }, {
-            isNewNotification: isNewNotification,
-            isView: isView
+            isNewNotification,
+            isView
         });
-        res.send(new Response({ status: 200, message: "Successfully add", data: notifications }))
+        res.send(new Response({ status: 200, message: "Successfully updated", data: notifications }))
 
     } catch (error) {
-        res.send(new Response({ status: error.code, message: error.message, data: {} }))
+        // console.log("error========>", error.message);
+        res.send(new Response({ status: error.statusCode, message: error.message, data: {} }))
 
     }
 
@@ -62,18 +65,18 @@ module.exports.getNotification = async (req, res) => {
     try {
         const {
             deviceId,
-            page
+            page,
+            isView
         } = req.query;
-        console.log("hetete");
 
         const notifications = await Notifications.find({
-            deviceId, isView: false
+            deviceId, isView
         }).sort({ createdAt: -1 }).limit(25).skip(page);
-        console.log("notifications", notifications);
+        // console.log("notifications", notifications);
         res.send(new Response({ status: 200, message: "query response", data: notifications }))
 
     } catch (error) {
-        res.send(new Response({ status: error.code, message: error.message, data: {} }))
+        res.send(new Response({ status: error.statusCode, message: error.message, data: {} }))
 
     }
 

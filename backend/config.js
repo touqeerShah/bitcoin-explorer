@@ -11,6 +11,6 @@ module.exports.configObj = {
   sslEnabled: process.env.sslEnabled,
   host: process.env.HOST,
   WEBSOCKET_PORT: process.env.WEBSOCKET_PORT,
-
+  BLOCKCHAIN_API_ENDPOINT: process.env.BLOCKCHAIN_API_ENDPOINT
 
 };
